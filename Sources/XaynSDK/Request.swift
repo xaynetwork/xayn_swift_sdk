@@ -20,6 +20,7 @@ enum Request {
 }
 
 extension Request {
+    // TODO: Update this when service deployed
     static let baseUrlString = "https://api.xayn.com"
     
     private var httpMethod: HttpMethod {
@@ -96,5 +97,37 @@ extension Request {
         request.httpMethod = httpMethod.rawValue
         request.httpBody = httpBody
         return request
+    }
+    
+    func errorFromStatusCode(_ statusCode: Int?) -> XaynError {
+        switch self {
+        case .personalizedDocuments:
+            switch statusCode {
+            case 404:
+                return .userNotFound
+            case 422:
+                return .unableToCreateListForUser
+            default:
+                return .unknownError
+            }
+            
+        case .likeDocument:
+            switch statusCode {
+            case 400:
+                return .invalidUserOrDocumentId
+            default:
+                return .unknownError
+            }
+            
+        case .addDocuments:
+            switch statusCode {
+            case 400:
+                return .invalidRequest
+            case 500:
+                return .documentsNotSuccessfullyUploaded
+            default:
+                return .unknownError
+            }
+        }
     }
 }

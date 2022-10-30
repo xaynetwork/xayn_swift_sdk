@@ -3,6 +3,7 @@
 //  
 //
 //  Created by Peter Stojanowski on 20/10/2022.
+//  Copyright © 2022 Xayn. All rights reserved.
 //
 
 import Foundation
@@ -41,13 +42,13 @@ public protocol Client {
     /// - Parameters:
     ///   - userId: Id of the user
     ///   - completion: The completion handler
-    func updateUserId(_ userId: String)
+    func updateUserId(_ userId: UUID)
 }
 
 public class XaynClient: Client {
-    private(set) var userId: String
+    private(set) var userId: UUID
     
-    public init(userId: String) {
+    public init(userId: UUID) {
         self.userId = userId
     }
     
@@ -55,15 +56,20 @@ public class XaynClient: Client {
         let request = Request.personalizedDocuments(count: nil)
         guard let urlRequest = request.buildURLRequest(userId: userId) else { return }
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let statusCode = response?.httpStatusCode else {
+                completion(.failure(.unknownError))
+                return
+            }
+
             if let data = data {
                 if let response = try? JSONDecoder().decode(PersonalizedDocumentsResponse.self, from: data) {
                     completion(.success(response))
                 } else {
-                    let error = request.errorFromStatusCode(response?.statusCode)
+                    let error = request.errorFromStatusCode(statusCode)
                     completion(.failure(error))
                 }
-            } else if error != nil {
-                let error = request.errorFromStatusCode(response?.statusCode)
+            } else {
+                let error = request.errorFromStatusCode(statusCode)
                 completion(.failure(error))
             }
         }
@@ -74,11 +80,16 @@ public class XaynClient: Client {
         let request = Request.likeDocument(documentId: documentId)
         guard let urlRequest = request.buildURLRequest(userId: userId) else { return }
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if error != nil {
-                let error = request.errorFromStatusCode(response?.statusCode)
-                completion(.failure(error))
-            } else {
+            guard let statusCode = response?.httpStatusCode else {
+                completion(.failure(.unknownError))
+                return
+            }
+            
+            if statusCode.isOK {
                 completion(.success(()))
+            } else {
+                let error = request.errorFromStatusCode(statusCode)
+                completion(.failure(error))
             }
         }
         task.resume()
@@ -88,24 +99,35 @@ public class XaynClient: Client {
         let request = Request.addDocuments(documents)
         guard let urlRequest = request.buildURLRequest(userId: userId) else { return }
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if error != nil {
-                let error = request.errorFromStatusCode(response?.statusCode)
-                completion(.failure(error))
-            } else {
+            guard let statusCode = response?.httpStatusCode else {
+                completion(.failure(.unknownError))
+                return
+            }
+            
+            if statusCode.isOK {
                 completion(.success(()))
+            } else {
+                let error = request.errorFromStatusCode(statusCode)
+                completion(.failure(error))
             }
         }
         task.resume()
     }
     
-    public func updateUserId(_ userId: String) {
+    public func updateUserId(_ userId: UUID) {
         self.userId = userId
     }
 }
 
 extension URLResponse {
-    var statusCode: Int? {
+    var httpStatusCode: Int? {
         guard let httpResponse = self as? HTTPURLResponse else { return nil }
         return httpResponse.statusCode
+    }
+}
+
+extension Int {
+    var isOK: Bool {
+        return (200 ..< 300).contains(self)
     }
 }

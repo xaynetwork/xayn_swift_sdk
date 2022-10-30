@@ -3,6 +3,7 @@
 //  
 //
 //  Created by Peter Stojanowski on 24/10/2022.
+//  Copyright © 2022 Xayn. All rights reserved.
 //
 
 import Foundation
@@ -21,7 +22,7 @@ enum Request {
 
 extension Request {
     // TODO: Update this when service deployed
-    static let baseUrlString = "https://api.xayn.com"
+    static let baseUrlString = "http://localhost:3030"
     
     private var httpMethod: HttpMethod {
         switch self {
@@ -87,8 +88,8 @@ extension Request {
         }
     }
     
-    func buildURLRequest(userId: String) -> URLRequest? {
-        guard let url = url(userId: userId) else { return nil }
+    func buildURLRequest(userId: UUID) -> URLRequest? {
+        guard let url = url(userId: userId.uuidString) else { return nil }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         components?.queryItems = queryItems
         guard let url = components?.url else { return nil }
@@ -99,7 +100,7 @@ extension Request {
         return request
     }
     
-    func errorFromStatusCode(_ statusCode: Int?) -> XaynError {
+    func errorFromStatusCode(_ statusCode: Int) -> XaynError {
         switch self {
         case .personalizedDocuments:
             switch statusCode {

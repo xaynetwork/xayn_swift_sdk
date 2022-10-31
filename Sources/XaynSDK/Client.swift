@@ -22,12 +22,19 @@ public protocol Client {
     ///   - completion: The completion handler
     func personalizedDocuments(completion: @escaping PersonalizedDocumentsCompetion)
     
+    @available(iOS 13.0.0, macOS 12.0, *)
+    func personalizedDocuments() async throws -> PersonalizedDocumentsResponse
+
+    
     /// The positive interaction is used to provide personalized documents to the user.
     ///
     /// - Parameters:
     ///   - documentId: Id of the document
     ///   - completion: The completion handler
     func likeDocument(documentId: String, completion: @escaping DefaultCompletion)
+    
+    @available(iOS 13.0.0, macOS 12.0, *)
+    func likeDocument(documentId: String) async throws
     
     /// Add documents to the system. The system will create a representation
     /// of the document that will be used to match it against the preferences of a user.
@@ -36,6 +43,9 @@ public protocol Client {
     ///   - documents: Documents to upload
     ///   - completion: The completion handler
     func addDocuments(_ documents: [IngestedDocument], completion: @escaping DefaultCompletion)
+    
+    @available(iOS 13.0.0, macOS 12.0, *)
+    func addDocuments(_ documents: [IngestedDocument]) async throws
     
     /// Updates the curent `userId` to a new one.
     ///
@@ -76,6 +86,22 @@ public class XaynClient: Client {
         task.resume()
     }
     
+    @available(iOS 13.0.0, macOS 12.0, *)
+    public func personalizedDocuments() async throws -> PersonalizedDocumentsResponse {
+        let request = Request.personalizedDocuments(count: nil)
+        guard let urlRequest = request.buildURLRequest(userId: userId) else { throw XaynError.unknownError }
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        guard let statusCode = response.httpStatusCode else {
+            throw XaynError.unknownError
+        }
+        
+        if let response = try? JSONDecoder().decode(PersonalizedDocumentsResponse.self, from: data) {
+            return response
+        } else {
+            throw request.errorFromStatusCode(statusCode)
+        }
+    }
+        
     public func likeDocument(documentId: String, completion: @escaping DefaultCompletion) {
         let request = Request.likeDocument(documentId: documentId)
         guard let urlRequest = request.buildURLRequest(userId: userId) else { return }
@@ -95,6 +121,19 @@ public class XaynClient: Client {
         task.resume()
     }
     
+    @available(iOS 13.0.0, macOS 12.0, *)
+    public func likeDocument(documentId: String) async throws {
+        let request = Request.likeDocument(documentId: documentId)
+        guard let urlRequest = request.buildURLRequest(userId: userId) else { throw XaynError.unknownError }
+        let (_, response) = try await URLSession.shared.data(for: urlRequest)
+        guard let statusCode = response.httpStatusCode else {
+            throw XaynError.unknownError
+        }
+        if !statusCode.isOK {
+            throw request.errorFromStatusCode(statusCode)
+        }
+    }
+    
     public func addDocuments(_ documents: [IngestedDocument], completion: @escaping DefaultCompletion) {
         let request = Request.addDocuments(documents)
         guard let urlRequest = request.buildURLRequest(userId: userId) else { return }
@@ -112,6 +151,19 @@ public class XaynClient: Client {
             }
         }
         task.resume()
+    }
+    
+    @available(iOS 13.0.0, macOS 12.0, *)
+    public func addDocuments(_ documents: [IngestedDocument]) async throws {
+        let request = Request.addDocuments(documents)
+        guard let urlRequest = request.buildURLRequest(userId: userId) else { throw XaynError.unknownError }
+        let (_, response) = try await URLSession.shared.data(for: urlRequest)
+        guard let statusCode = response.httpStatusCode else {
+            throw XaynError.unknownError
+        }
+        if !statusCode.isOK {
+            throw request.errorFromStatusCode(statusCode)
+        }
     }
     
     public func updateUserId(_ userId: UUID) {

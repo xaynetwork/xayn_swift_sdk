@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum XaynError: Error {
+public enum XaynErrorType {
     case unknownError
     case invalidRequest
     case invalidUserId
@@ -16,4 +16,14 @@ public enum XaynError: Error {
     case userNotFound
     case unableToCreateListForUser
     case documentsNotSuccessfullyUploaded
+}
+
+public struct XaynError: Error {
+    let type: XaynErrorType
+    let statusCode: Int?
+    let message: String?
+    
+    static var unknownError: XaynError {
+        XaynError(type: .unknownError, statusCode: nil, message: nil)
+    }
 }

@@ -75,12 +75,12 @@ public class XaynClient: Client {
                 if let response = try? JSONDecoder().decode(PersonalizedDocumentsResponse.self, from: data) {
                     completion(.success(response))
                 } else {
-                    let error = request.errorFromStatusCode(statusCode)
-                    completion(.failure(error))
+                    let xaynError = request.errorFromStatusCode(statusCode, message: error?.localizedDescription)
+                    completion(.failure(xaynError))
                 }
             } else {
-                let error = request.errorFromStatusCode(statusCode)
-                completion(.failure(error))
+                let xaynError = request.errorFromStatusCode(statusCode, message: error?.localizedDescription)
+                completion(.failure(xaynError))
             }
         }
         task.resume()
@@ -98,7 +98,7 @@ public class XaynClient: Client {
         if let response = try? JSONDecoder().decode(PersonalizedDocumentsResponse.self, from: data) {
             return response
         } else {
-            throw request.errorFromStatusCode(statusCode)
+            throw request.errorFromStatusCode(statusCode, message: response.description)
         }
     }
         
@@ -114,8 +114,8 @@ public class XaynClient: Client {
             if statusCode.isOK {
                 completion(.success(()))
             } else {
-                let error = request.errorFromStatusCode(statusCode)
-                completion(.failure(error))
+                let xaynError = request.errorFromStatusCode(statusCode, message: error?.localizedDescription)
+                completion(.failure(xaynError))
             }
         }
         task.resume()
@@ -130,7 +130,7 @@ public class XaynClient: Client {
             throw XaynError.unknownError
         }
         if !statusCode.isOK {
-            throw request.errorFromStatusCode(statusCode)
+            throw request.errorFromStatusCode(statusCode, message: response.description)
         }
     }
     
@@ -146,8 +146,8 @@ public class XaynClient: Client {
             if statusCode.isOK {
                 completion(.success(()))
             } else {
-                let error = request.errorFromStatusCode(statusCode)
-                completion(.failure(error))
+                let xaynError = request.errorFromStatusCode(statusCode, message: error?.localizedDescription)
+                completion(.failure(xaynError))
             }
         }
         task.resume()
@@ -162,7 +162,7 @@ public class XaynClient: Client {
             throw XaynError.unknownError
         }
         if !statusCode.isOK {
-            throw request.errorFromStatusCode(statusCode)
+            throw request.errorFromStatusCode(statusCode, message: response.description)
         }
     }
     

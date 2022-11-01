@@ -101,35 +101,37 @@ extension Request {
         return request
     }
     
-    func errorFromStatusCode(_ statusCode: Int) -> XaynError {
+    func errorFromStatusCode(_ statusCode: Int, message: String?) -> XaynError {
+        let errorType: XaynErrorType
         switch self {
         case .personalizedDocuments:
             switch statusCode {
             case 404:
-                return .userNotFound
+                errorType = .userNotFound
             case 422:
-                return .unableToCreateListForUser
+                errorType = .unableToCreateListForUser
             default:
-                return .unknownError
+                errorType = .unknownError
             }
             
         case .likeDocument:
             switch statusCode {
             case 400:
-                return .invalidUserOrDocumentId
+                errorType = .invalidUserOrDocumentId
             default:
-                return .unknownError
+                errorType = .unknownError
             }
             
         case .addDocuments:
             switch statusCode {
             case 400:
-                return .invalidRequest
+                errorType = .invalidRequest
             case 500:
-                return .documentsNotSuccessfullyUploaded
+                errorType = .documentsNotSuccessfullyUploaded
             default:
-                return .unknownError
+                errorType = .unknownError
             }
         }
+        return XaynError(type: errorType, statusCode: statusCode, message: message)
     }
 }

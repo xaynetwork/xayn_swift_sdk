@@ -30,7 +30,7 @@ To use the SDK in your project, install it using Swift Package Manager by adding
 
 Import the SDK.
 ```swift
-import SwiftSDK
+import XaynSDK
 ```
 
 Initialize the client with a User ID.

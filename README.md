@@ -30,36 +30,31 @@ To use the SDK in your project, install it using Swift Package Manager by adding
 
 Import the SDK.
 ```swift
-	import SwiftSDK
+import SwiftSDK
 ```
 
 Initialize the client with a User ID.
 ```swift
-	let client = XaynClient(userId: UUID())
+let client = XaynClient(userId: UUID())
 ```
 
 Use the client to call an API.
 ```swift
-	let response = try await client.personalizedDocuments()
+let response = try await client.personalizedDocuments()
 ```
 
 To change the User ID, use the `updateUserId()` method, passing the new User ID.
-Initialize the client with a User ID
 ```swift
-	client.updateUserId(UUID())
+client.updateUserId(UUID())
 ```
 
 
- - Please also give a try to the [example app](../main/example/)
-
-[top :arrow_heading_up:](#project_name)
+Please also give a try to the [example app](../main/example/)
 
 ----------
 
 
 ## License :scroll:
-**project_name** is licensed under `Apache 2`. View [license](../main/LICENSE).
-
-[top :arrow_heading_up:](#project_name)
+**XaynSDK** is licensed under `Apache 2`. View [license](../main/LICENSE).
 
 ----------

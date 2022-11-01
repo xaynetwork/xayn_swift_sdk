@@ -26,7 +26,7 @@ struct Repeat: ParsableCommand, AsyncParsableCommand {
 
     private func personalization() async {
         print("Calling /users/{user_id}/personalized_documents ...")
-        let client = XaynClient(userId: UUID())
+        let client = XaynClient(userId: "r")
         do {
             let response = try await client.personalizedDocuments()
             print("Received response: \(response)")
@@ -37,9 +37,9 @@ struct Repeat: ParsableCommand, AsyncParsableCommand {
     
     private func interactions() async {
         print("Calling /users/{user_id}/interactions ...")
-        let client = XaynClient(userId: UUID())
+        let client = XaynClient(userId: "r")
         do {
-            try await client.likeDocument(documentId: "doc 1")
+            try await client.likeDocument(documentId: "document id 0001")
             print("Success")
         } catch {
             print("Received error: \(error)")
@@ -48,7 +48,7 @@ struct Repeat: ParsableCommand, AsyncParsableCommand {
     
     private func documents() async {
         print("Calling /documents ...")
-        let client = XaynClient(userId: UUID())
+        let client = XaynClient(userId: "r")
         let doc = IngestedDocument(id: "document id 0001",
                                    snippet: "Snippet of text that will be used to calculate embeddings.",
                                    properties: ["title": "Document title"])

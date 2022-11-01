@@ -75,7 +75,7 @@ public class XaynClient: Client {
                 if let response = try? JSONDecoder().decode(PersonalizedDocumentsResponse.self, from: data) {
                     completion(.success(response))
                 } else {
-                    let xaynError = request.errorFromStatusCode(statusCode, message: error?.localizedDescription)
+                    let xaynError = request.errorFromStatusCode(statusCode, message: "Unable to decode the response")
                     completion(.failure(xaynError))
                 }
             } else {
@@ -98,7 +98,7 @@ public class XaynClient: Client {
         if let response = try? JSONDecoder().decode(PersonalizedDocumentsResponse.self, from: data) {
             return response
         } else {
-            throw request.errorFromStatusCode(statusCode, message: response.description)
+            throw request.errorFromStatusCode(statusCode, message: "Unable to decode the response")
         }
     }
         

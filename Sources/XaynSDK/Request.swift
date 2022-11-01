@@ -21,8 +21,8 @@ enum Request {
 }
 
 extension Request {
-    // TODO: Update this when service deployed
-    static let baseUrlString = "http://localhost:3030"
+    static let baseUrlString = "https://z08ifbakyb.execute-api.eu-central-1.amazonaws.com/default"
+    static let authorizationToken = "58ph5hPX874ogqV94RwlA1CnhauEH2HOhgNvPiV6"
     
     private var httpMethod: HttpMethod {
         switch self {
@@ -88,13 +88,14 @@ extension Request {
         }
     }
     
-    func buildURLRequest(userId: UUID) -> URLRequest? {
-        guard let url = url(userId: userId.uuidString) else { return nil }
+    func buildURLRequest(userId: String) -> URLRequest? {
+        guard let url = url(userId: userId) else { return nil }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         components?.queryItems = queryItems
         guard let url = components?.url else { return nil }
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(Request.authorizationToken, forHTTPHeaderField: "authorizationToken")
         request.httpMethod = httpMethod.rawValue
         request.httpBody = httpBody
         return request

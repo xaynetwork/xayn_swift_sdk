@@ -52,13 +52,13 @@ public protocol Client {
     /// - Parameters:
     ///   - userId: Id of the user
     ///   - completion: The completion handler
-    func updateUserId(_ userId: UUID)
+    func updateUserId(_ userId: String)
 }
 
 public class XaynClient: Client {
-    private(set) var userId: UUID
+    private(set) var userId: String
     
-    public init(userId: UUID) {
+    public init(userId: String) {
         self.userId = userId
     }
     
@@ -166,7 +166,7 @@ public class XaynClient: Client {
         }
     }
     
-    public func updateUserId(_ userId: UUID) {
+    public func updateUserId(_ userId: String) {
         self.userId = userId
     }
 }

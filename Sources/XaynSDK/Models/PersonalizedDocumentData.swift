@@ -10,7 +10,7 @@ import Foundation
 
 public struct PersonalizedDocumentData: Decodable {
     public let id: String
-    public let score: Int
+    public let score: Double
     public let properties: [String: Any]
     
     enum CodingKeys: String, CodingKey {
@@ -22,7 +22,7 @@ public struct PersonalizedDocumentData: Decodable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decode(String.self, forKey: .id)
-        score = try values.decode(Int.self, forKey: .score)
+        score = try values.decode(Double.self, forKey: .score)
         properties = try values.decode([String: Any].self, forKey: .properties)
     }
 }

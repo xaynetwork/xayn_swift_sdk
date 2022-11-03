@@ -33,14 +33,14 @@ Import the SDK.
 import XaynSDK
 ```
 
-Initialize the client with a User ID.
+Initialize the client with an API key and User ID.
 ```swift
-let client = XaynClient(userId: "user ID")
+let client = XaynClient(apiKey: "API key", userId: "user ID")
 ```
 
 Use the client to call an API.
 ```swift
-let response = try await client.personalizedDocuments()
+let response = try await client.personalizedDocuments(count: 5)
 ```
 
 To change the User ID, use the `updateUserId()` method, passing the new User ID.

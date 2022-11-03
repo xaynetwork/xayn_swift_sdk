@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xaynetwork/xayn_swift_sdk",
       "state" : {
-        "revision" : "09372e866be840c464b43066170e3e069b6a868e",
-        "version" : "1.0.4"
+        "revision" : "36c9a1c1500f6e521770dafca8f844516b766f84",
+        "version" : "1.0.6"
       }
     }
   ],

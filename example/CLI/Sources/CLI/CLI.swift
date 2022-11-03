@@ -9,7 +9,7 @@ enum XaynSDKFunction: String, ExpressibleByArgument {
 }
 
 @main
-struct Repeat: ParsableCommand, AsyncParsableCommand {
+struct MainCommand: ParsableCommand, AsyncParsableCommand {
     @Argument(help: "The function to run (personalization, interactions, documents).")
     var function: XaynSDKFunction
 
@@ -26,10 +26,10 @@ struct Repeat: ParsableCommand, AsyncParsableCommand {
 
     private func personalization() async {
         print("Calling /users/{user_id}/personalized_documents ...")
-        let client = XaynClient(userId: "r")
+        let client = XaynClient(apiKey: "<your API key>", userId: "r")
         do {
-            let response = try await client.personalizedDocuments()
-            print("Received response: \(response)")
+            let response = try await client.personalizedDocuments(count: 5)
+            print("Received documents: \(response.documents)")
         } catch {
             print("Received error: \(error)")
         }
@@ -37,7 +37,7 @@ struct Repeat: ParsableCommand, AsyncParsableCommand {
     
     private func interactions() async {
         print("Calling /users/{user_id}/interactions ...")
-        let client = XaynClient(userId: "r")
+        let client = XaynClient(apiKey: "<your API key>", userId: "r")
         do {
             try await client.likeDocument(documentId: "document id 0001")
             print("Success")
@@ -48,7 +48,7 @@ struct Repeat: ParsableCommand, AsyncParsableCommand {
     
     private func documents() async {
         print("Calling /documents ...")
-        let client = XaynClient(userId: "r")
+        let client = XaynClient(apiKey: "<your API key>", userId: "r")
         let doc = IngestedDocument(id: "document id 0001",
                                    snippet: "Snippet of text that will be used to calculate embeddings.",
                                    properties: ["title": "Document title"])

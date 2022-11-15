@@ -21,8 +21,6 @@ enum Request {
 }
 
 extension Request {
-    static let baseUrlString = "https://z08ifbakyb.execute-api.eu-central-1.amazonaws.com/default"
-    
     private var httpMethod: HttpMethod {
         switch self {
         case .personalizedDocuments:
@@ -36,7 +34,7 @@ extension Request {
         }
     }
     
-    private func url(userId: String) -> URL? {
+    private func url(userId: String, baseUrl : String) -> URL? {
         let path: String
         switch self {
         case .personalizedDocuments:
@@ -49,7 +47,7 @@ extension Request {
             path = "/documents"
         }
         
-        let urlString = Request.baseUrlString.appending(path)
+        let urlString = baseUrl.appending(path)
         return URL(string: urlString)
     }
     
@@ -87,8 +85,8 @@ extension Request {
         }
     }
     
-    func buildURLRequest(apiKey: String, userId: String) -> URLRequest? {
-        guard let url = url(userId: userId) else { return nil }
+    func buildURLRequest(apiKey: String, userId: String, baseUrl: String) -> URLRequest? {
+        guard let url = url(userId: userId, baseUrl: baseUrl) else { return nil }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         components?.queryItems = queryItems
         guard let url = components?.url else { return nil }

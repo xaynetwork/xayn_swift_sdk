@@ -58,16 +58,18 @@ public protocol Client {
 
 public class XaynClient: Client {
     private let apiKey: String
+    private let baseUrl: String;
     private(set) var userId: String
     
-    public init(apiKey: String, userId: String) {
+    public init(apiKey: String, userId: String, baseUrl: String) {
         self.apiKey = apiKey
         self.userId = userId
+        self.baseUrl = baseUrl;
     }
     
     public func personalizedDocuments(count: Int?, completion: @escaping PersonalizedDocumentsCompetion) {
         let request = Request.personalizedDocuments(count: count)
-        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId) else { return }
+        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId, baseUrl: baseUrl) else { return }
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             guard let statusCode = response?.httpStatusCode else {
                 completion(.failure(.unknownError))
@@ -92,7 +94,7 @@ public class XaynClient: Client {
     @available(iOS 13.0.0, macOS 12.0, *)
     public func personalizedDocuments(count: Int?) async throws -> PersonalizedDocumentsResponse {
         let request = Request.personalizedDocuments(count: count)
-        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId) else { throw XaynError.unknownError }
+        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId, baseUrl: baseUrl) else { throw XaynError.unknownError }
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
         guard let statusCode = response.httpStatusCode else {
             throw XaynError.unknownError
@@ -107,7 +109,7 @@ public class XaynClient: Client {
         
     public func likeDocument(documentId: String, completion: @escaping DefaultCompletion) {
         let request = Request.likeDocument(documentId: documentId)
-        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId) else { return }
+        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId, baseUrl: baseUrl) else { return }
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             guard let statusCode = response?.httpStatusCode else {
                 completion(.failure(.unknownError))
@@ -127,7 +129,7 @@ public class XaynClient: Client {
     @available(iOS 13.0.0, macOS 12.0, *)
     public func likeDocument(documentId: String) async throws {
         let request = Request.likeDocument(documentId: documentId)
-        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId) else { throw XaynError.unknownError }
+        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId, baseUrl: baseUrl) else { throw XaynError.unknownError }
         let (_, response) = try await URLSession.shared.data(for: urlRequest)
         guard let statusCode = response.httpStatusCode else {
             throw XaynError.unknownError
@@ -139,7 +141,7 @@ public class XaynClient: Client {
     
     public func addDocuments(_ documents: [IngestedDocument], completion: @escaping DefaultCompletion) {
         let request = Request.addDocuments(documents)
-        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId) else { return }
+        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId, baseUrl: baseUrl) else { return }
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             guard let statusCode = response?.httpStatusCode else {
                 completion(.failure(.unknownError))
@@ -159,7 +161,7 @@ public class XaynClient: Client {
     @available(iOS 13.0.0, macOS 12.0, *)
     public func addDocuments(_ documents: [IngestedDocument]) async throws {
         let request = Request.addDocuments(documents)
-        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId) else { throw XaynError.unknownError }
+        guard let urlRequest = request.buildURLRequest(apiKey: apiKey, userId: userId, baseUrl: baseUrl) else { throw XaynError.unknownError }
         let (_, response) = try await URLSession.shared.data(for: urlRequest)
         guard let statusCode = response.httpStatusCode else {
             throw XaynError.unknownError
